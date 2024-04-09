@@ -1,5 +1,5 @@
 import pygame, math, time
-from sprites import Pos, Donny
+from src.sprites import Pos, Donny
 
 class Game():
 	# CONSTANT GAME VARIABLES
