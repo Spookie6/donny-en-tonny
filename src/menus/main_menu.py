@@ -23,30 +23,37 @@ class Menu():
 		self.clock = pygame.time.Clock()
 		self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.FULLSCREEN)
 		self.keys = []
+		self.buttonDown = False
 		self.menuButtons = []
-		self.menuButtons.append(Button(Pos(10, 10), 200, 50, "Host"))
-		self.menuButtons.append(Button(Pos(10, 100), 200, 50, "Join"))
-		self.menuButtons.append(Button(Pos(10, 200), 200, 50, "Settings"))
+		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 2 - 10), 200, 50, "Host"))
+		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2), 200, 50, "Join"))
+		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2), 200, 50, "Settings"))
 
 	def run(self) -> None:
 		while self.running:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.running = False
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					self.buttonDown = True
 
-			self.keyboard()
 			self.screen.fill("black")
+			self.keyboard()
+   
 			for button in self.menuButtons:
 				button.draw(self.screen, self.font)
+				button.checkActive(self.buttonDown)
    
 			pygame.display.flip()
 			self.clock.tick(self.FPS)
+			self.buttonDown = False
    
 	def keyboard(self) -> list:
 		keys = pygame.key.get_pressed()
 		if keys[pygame.K_ESCAPE]:
 			pygame.quit()
 		self.keys = keys
+
 
 if __name__ == "__main__":
 	menu = Menu()
