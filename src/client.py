@@ -19,6 +19,6 @@ def send(msg):
     client.send(message)
     print(client.recv(HEADER).decode(FORMAT))
     
-send("Hello World!")
+send("(Enrico, Password)")
 input()
 send(DISCONNECT_MESSAGE)

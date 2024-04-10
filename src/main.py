@@ -1,15 +1,16 @@
 import pygame, time
 from sprites import Pos, Donny
 
-class Game():
+class Game:
 	# CONSTANT GAME VARIABLES
 	SCREEN_WIDTH:int = 1920
 	SCREEN_HEIGHT:int = 1080
 	FPS:int = 60
-	def __init__(self) -> None:
+	def __init__(self, configs) -> None:
 		# GAME VARIABLES
 		pygame.init()
-  
+		self.configs = configs
+
 		self.running:bool = True
 		self.font = pygame.font.SysFont("default", 64, bold=False, italic=False)
 		self.clock = pygame.time.Clock()
@@ -37,7 +38,7 @@ class Game():
 	def keyboard(self) -> list:
 		keys = pygame.key.get_pressed()
 		if keys[pygame.K_ESCAPE]:
-			time.sleep(.2)
+			pygame.time.delay(200)
 			self.running = False
 		self.keys = keys
 

@@ -8,9 +8,16 @@ sys.path.append(path)
 
 from sprites import Pos
 from components import Button
-from server import Server
 
-class HostMenu:
+RESOLUTIONS = ([1280, 720], [1920, 1080], [2560, 1440])
+
+def changeResolution(configs, res):
+	for Res in RESOLUTIONS:
+		if int(res) in Res:
+			configs.setRes(Res)
+			
+
+class SettingsMenu:
 	# CONSTANT GAME VARIABLES
 	SCREEN_WIDTH:int = 1920
 	SCREEN_HEIGHT:int = 1080
@@ -27,7 +34,11 @@ class HostMenu:
 		self.keys = []
 		self.buttonDown = False
 		self.menuButtons = []
-		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 2 + 10), 200, 50, "Activate Server", None))
+		# Multiply the button dimensions with the resolution scale
+		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 - 125), 200, 50, "720p",))
+		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2), 200, 50, "1080p",))
+		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 + 125), 200, 50, "1440p",))
+		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 + 250), 200, 50, "Save",))
 
 	def run(self) -> None:
 		while self.running:
@@ -46,9 +57,12 @@ class HostMenu:
 				mx, my = pygame.mouse.get_pos()
 				if self.buttonDown and button.rect.collidepoint((mx, my)):
 					pygame.time.delay(200)
-					server = Server("Enrico", "Password")
-					server.start()
-   
+					if button.title == "Save":
+						self.configs.save()
+						pygame.quit()
+					else:
+						changeResolution(self.configs, int(button.title[:-1]))
+
 			pygame.display.update()
 			self.clock.tick(self.FPS)
 			self.buttonDown = False
@@ -62,5 +76,5 @@ class HostMenu:
 
 
 if __name__ == "__main__":
-	menu = HostMenu()
+	menu = SettingsMenu()
 	menu.run()
