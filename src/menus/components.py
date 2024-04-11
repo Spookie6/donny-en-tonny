@@ -13,6 +13,7 @@ class Button:
 		self.pos = pos
 		self.width = width
 		self.height = height
+		self.color = "White"
 		self.borderRadius = 50
 		self.title = title
 		self.action = action
@@ -20,7 +21,7 @@ class Button:
   
 	def draw(self, screen, font):
 		posTuple = self.pos.getTuple()
-		pygame.draw.rect(screen, "white", self.rect)
+		pygame.draw.rect(screen, self.color, self.rect)
 
 		titleImg = font.render(self.title, False, "Blue")
 		x, y, w, h = titleImg.get_rect(center=posTuple)
@@ -28,12 +29,16 @@ class Button:
 
 	def checkActive(self, buttonDown, configs):
 		mx, my = pygame.mouse.get_pos()
-		if buttonDown and self.rect.collidepoint((mx, my)):
-			if self.action:
-				pygame.time.delay(200)
-				self.action(configs).run()
-			else:
-				self.title = "Clicked"
+		if (self.rect.collidepoint((mx, my))):
+			self.color = "Green"
+			if buttonDown:
+				if self.action:
+					pygame.time.delay(200)
+					self.action(configs).run()
+				else:
+					self.title = "Clicked"
+		if not (self.rect.collidepoint((mx, my))):
+			self.color = "White"
     
 	def rescale(self, originalScaleTuple, configs):
 		w, h = configs.toml_dict['resolution']

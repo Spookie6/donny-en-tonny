@@ -31,21 +31,21 @@ class MainMenu:
 		self.font = pygame.font.SysFont("default", 32, bold=False, italic=False)
 		self.clock = pygame.time.Clock()
 		self.surface = pygame.Surface((2560, 1440))
-		self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+		self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.FULLSCREEN)
 		self.keys = []
 		self.buttonDown = False
 		self.menuButtons = []
-		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 + 10), 200, 50, "Host", HostMenu))
-		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 + 110), 200, 50, "Join", Game))
-		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 + 210), 200, 50, "Settings", SettingsMenu))
+		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 200, self.SCREEN_HEIGHT / 2 - 130), 400, 100, "Host", HostMenu))
+		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 200, self.SCREEN_HEIGHT / 2), 400, 100, "Join", Game))
+		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 200, self.SCREEN_HEIGHT / 2 + 130), 400, 100, "Settings", SettingsMenu))
 	
 	def run(self) -> None:
 		print(f"[MAIN MENU] - Resolution: ({self.screen.get_rect()})")
 		print(f"[MAIN MENU] - Button Info: {self.menuButtons[0].pos.x}, {self.menuButtons[0].pos.y}")
 
 		# Load bg image
-		bg_img = pygame.image.load("src/assets/menu-background.jpg").convert_alpha()
-
+		bg_img = pygame.image.load("src/assets/menu-backgroun.jpg").convert_alpha()
+		print(bg_img.get_rect())
   
 		while self.running:
 			for event in pygame.event.get():
@@ -58,7 +58,7 @@ class MainMenu:
 			self.keyboard()
    
 			self.surface.fill("black")
-			self.surface.blit(bg_img, bg_img.get_rect())
+			self.surface.blit(bg_img, (0,0))
    
 			# Resize
 			sw, sh = self.configs.toml_dict["resolution"]
@@ -71,12 +71,13 @@ class MainMenu:
 				print(f"[MAIN MENU] - Button Info: {self.menuButtons[0].pos.x}, {self.menuButtons[0].pos.y}")
 
 			for button in self.menuButtons:
-				button.draw(self.screen, self.font)
+				button.draw(self.surface, self.font)
 				button.checkActive(self.buttonDown, self.configs)
    
 			self.buttonDown = False
    
-			pygame.transform.scale(self.surface, (self.SCREEN_WIDTH/2560, self.SCREEN_HEIGHT / 1440))
+			pygame.transform.scale(self.surface, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+			print(self.surface.get_rect())
 			self.screen.blit(self.surface, (0, 0))
 			pygame.display.update()
 			self.clock.tick(self.FPS)

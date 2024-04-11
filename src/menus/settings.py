@@ -32,7 +32,6 @@ class SettingsMenu:
 		self.keys = []
 		self.buttonDown = False
 		self.menuButtons = []
-		# Multiply the button dimensions with the resolution scale
 		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 - 125), 200, 50, "720p",))
 		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2), 200, 50, "1080p",))
 		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 + 125), 200, 50, "1440p",))
