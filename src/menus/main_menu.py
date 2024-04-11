@@ -1,10 +1,13 @@
 import pygame, sys
+import tkinter as tk
 
 path = sys.path[0].split("\\")
 path.pop()
 path = "\\".join(path)
 
 sys.path.append(path)
+
+RESOLUTIONS = ([1280, 720], [1920, 1080], [2560, 1440])
 
 from components import Button
 from sprites import Pos
@@ -17,8 +20,6 @@ from data.configs import Configs
 
 class MainMenu:
 	# # CONSTANT GAME VARIABLES
-	# SCREEN_WIDTH:int = width
-	# SCREEN_HEIGHT:int = height
 	FPS:int = 60
 	def __init__(self) -> None:
 		# Menu VARIABLES
@@ -29,15 +30,23 @@ class MainMenu:
 		self.running:bool = True
 		self.font = pygame.font.SysFont("default", 32, bold=False, italic=False)
 		self.clock = pygame.time.Clock()
-		self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.FULLSCREEN)
+		self.surface = pygame.Surface((2560, 1440))
+		self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
 		self.keys = []
 		self.buttonDown = False
 		self.menuButtons = []
 		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 + 10), 200, 50, "Host", HostMenu))
 		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 + 110), 200, 50, "Join", Game))
 		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 + 210), 200, 50, "Settings", SettingsMenu))
-
+	
 	def run(self) -> None:
+		print(f"[MAIN MENU] - Resolution: ({self.screen.get_rect()})")
+		print(f"[MAIN MENU] - Button Info: {self.menuButtons[0].pos.x}, {self.menuButtons[0].pos.y}")
+
+		# Load bg image
+		bg_img = pygame.image.load("src/assets/menu-background.jpg").convert_alpha()
+
+  
 		while self.running:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -45,19 +54,32 @@ class MainMenu:
 					sys.exit()
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					self.buttonDown = True
-			if self.configs.toml_dict["resolution"][0] != self.SCREEN_WIDTH:
-				print("hello!")
-
-			self.screen.fill("black")
+			self.configs = Configs()
 			self.keyboard()
    
+			self.surface.fill("black")
+			self.surface.blit(bg_img, bg_img.get_rect())
+   
+			# Resize
+			sw, sh = self.configs.toml_dict["resolution"]
+			if  sw != self.SCREEN_WIDTH:
+				print("Wrong resolution!")
+				self.resizeDisplay((sw, sh))
+				for button in self.menuButtons:
+					button.rescale((), self.configs)
+				print(f"[MAIN MENU] - Rezised to ({sw}, {sh})")
+				print(f"[MAIN MENU] - Button Info: {self.menuButtons[0].pos.x}, {self.menuButtons[0].pos.y}")
+
 			for button in self.menuButtons:
 				button.draw(self.screen, self.font)
 				button.checkActive(self.buttonDown, self.configs)
    
+			self.buttonDown = False
+   
+			pygame.transform.scale(self.surface, (self.SCREEN_WIDTH/2560, self.SCREEN_HEIGHT / 1440))
+			self.screen.blit(self.surface, (0, 0))
 			pygame.display.update()
 			self.clock.tick(self.FPS)
-			self.buttonDown = False
    
 	def keyboard(self) -> list:
 		keys = pygame.key.get_pressed()
@@ -65,6 +87,12 @@ class MainMenu:
 			pygame.quit()
 			sys.exit()
 		self.keys = keys
+  
+	def resizeDisplay(self, size) -> None:
+		print("Rezising!")
+		self.screen = pygame.display.set_mode(size)
+		self.SCREEN_WIDTH, self.SCREEN_HEIGHT = size
+		# self.font = pygame.font.SysFont("default", 32, bold=False, italic=False)
 
 
 if __name__ == "__main__":

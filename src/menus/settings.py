@@ -18,14 +18,12 @@ def changeResolution(configs, res):
 			
 
 class SettingsMenu:
-	# CONSTANT GAME VARIABLES
-	SCREEN_WIDTH:int = 1920
-	SCREEN_HEIGHT:int = 1080
 	FPS:int = 60
 	def __init__(self, configs) -> None:
 		# Menu VARIABLES
 		pygame.init()
 		self.configs = configs
+		self.SCREEN_WIDTH, self.SCREEN_HEIGHT = self.configs.toml_dict["resolution"]
   
 		self.running:bool = True
 		self.font = pygame.font.SysFont("default", 32, bold=False, italic=False)
@@ -41,6 +39,7 @@ class SettingsMenu:
 		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 + 250), 200, 50, "Save",))
 
 	def run(self) -> None:
+		print(f"[SETTINGSMENU] - Resolution: ({self.SCREEN_WIDTH}, {self.SCREEN_HEIGHT})")
 		while self.running:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -56,10 +55,10 @@ class SettingsMenu:
 				button.draw(self.screen, self.font)
 				mx, my = pygame.mouse.get_pos()
 				if self.buttonDown and button.rect.collidepoint((mx, my)):
-					pygame.time.delay(200)
 					if button.title == "Save":
 						self.configs.save()
-						pygame.quit()
+						pygame.time.delay(200)
+						self.running = False
 					else:
 						changeResolution(self.configs, int(button.title[:-1]))
 

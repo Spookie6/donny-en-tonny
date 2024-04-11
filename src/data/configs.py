@@ -1,6 +1,4 @@
-import toml
-
-import sys
+import toml, sys
 
 path = sys.path[0].split("\\")
 path.pop()
