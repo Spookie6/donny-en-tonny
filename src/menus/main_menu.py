@@ -35,9 +35,9 @@ class MainMenu:
 		self.keys = []
 		self.buttonDown = False
 		self.menuButtons = []
-		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 200, self.SCREEN_HEIGHT / 2 - 130), 400, 100, "Host", HostMenu))
-		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 200, self.SCREEN_HEIGHT / 2), 400, 100, "Join", Game))
-		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 200, self.SCREEN_HEIGHT / 2 + 130), 400, 100, "Settings", SettingsMenu))
+		self.menuButtons.append(Button(Pos(self.surface.get_rect()[2] / 2 - 200, self.surface.get_rect()[3] / 2 - 130), 400, 100, "Host", HostMenu))
+		self.menuButtons.append(Button(Pos(self.surface.get_rect()[2] / 2 - 200, self.surface.get_rect()[3] / 2), 400, 100, "Join", Game))
+		self.menuButtons.append(Button(Pos(self.surface.get_rect()[2] / 2 - 200, self.surface.get_rect()[3] / 2 + 130), 400, 100, "Settings", SettingsMenu))
 	
 	def run(self) -> None:
 		print(f"[MAIN MENU] - Resolution: ({self.screen.get_rect()})")
@@ -76,7 +76,7 @@ class MainMenu:
    
 			self.buttonDown = False
    
-			pygame.transform.scale(self.surface, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+			pygame.transform.scale(self.surface, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT), dest_surface=self.surface)
 			print(self.surface.get_rect())
 			self.screen.blit(self.surface, (0, 0))
 			pygame.display.update()
