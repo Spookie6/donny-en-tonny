@@ -1,5 +1,4 @@
-import socket
-import threading
+import socket, threading, time, sys
 
 HEADER = 64
 PORT = 5050
@@ -12,6 +11,7 @@ class Server:
     def __init__(self, name, password):
         self.name = name
         self.password = password
+        self.server = None
     def handleClient(self, conn, addr):
         print(f"[NEW CONNECTION] {addr} connected.")
 
@@ -35,12 +35,27 @@ class Server:
                 conn.send("Msg received.".encode(FORMAT))
 
     def start(self):
-        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.bind(ADDR)
-        server.listen()
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind(ADDR)
+        self.server.listen()
         print(f"[LISTENING] Server is listening on {SERVER} - Name: {self.name} - Password: {self.password}")
         while True:
-            conn, addr = server.accept()
+            conn, addr = self.server.accept()
             thread = threading.Thread(target=self.handleClient, args=(conn, addr))
             thread.start()
             print(f"[ACTIVE CONNTECTIONS] {threading.active_count() - 1}")
+    
+    def stop(self):
+        print(f"[SERVER]: Shutting down...")
+        self.server.shutdown(socket.SHUT_RDWR)
+        # self.server.close()
+    
+    
+            
+if __name__ == "__main__":
+    server = Server("Enrico", "Password")
+    thread = threading.Thread(target=server.start)
+    thread.start()
+    time.sleep(3)
+    server.stop()
+    sys.exit()

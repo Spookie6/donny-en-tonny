@@ -9,7 +9,7 @@ sys.path.append(path)
 from sprites import Pos
 
 class Button:
-	def __init__(self, pos, width, height, title, action=None) -> None:
+	def __init__(self, pos, width, height, title, action=None, screen=None) -> None:
 		self.pos = pos
 		self.width = width
 		self.height = height
@@ -17,7 +17,9 @@ class Button:
 		self.borderRadius = 50
 		self.title = title
 		self.action = action
+		self.screen = screen
 		self.rect = pygame.Rect(pos.x, pos.y, self.width, self.height)
+		self.default_rect = pygame.Rect(pos.x, pos.y, self.width, self.height)
   
 	def draw(self, screen, font):
 		posTuple = self.pos.getTuple()
@@ -34,20 +36,15 @@ class Button:
 			if buttonDown:
 				if self.action:
 					pygame.time.delay(200)
-					self.action(configs).run()
+					if self.screen:
+						self.action(configs, self.screen).run()
+					else:
+						self.action(configs).run()
 				else:
 					self.title = "Clicked"
+     
 		if not (self.rect.collidepoint((mx, my))):
 			self.color = "White"
-    
-	def rescale(self, originalScaleTuple, configs):
-		w, h = configs.toml_dict['resolution']
-
-		self.width = int(w/1920) * self.width
-		self.height = int(h/1080) * self.height
-		self.pos.x = w / 2 - self.width / 2
-		self.pos.y = h / 2 - self.height / 2
-		self.rect = pygame.Rect(self.pos.x, self.pos.y, self.width, self.height)
 
 class Header():
 	def __init__(self) -> None:
