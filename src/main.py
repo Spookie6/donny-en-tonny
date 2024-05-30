@@ -3,13 +3,12 @@ from sprites import Pos, Donny
 
 class Game:
 	# CONSTANT GAME VARIABLES
-	SCREEN_WIDTH:int = 1920
-	SCREEN_HEIGHT:int = 1080
 	FPS:int = 60
 	def __init__(self, configs) -> None:
 		# GAME VARIABLES
 		pygame.init()
 		self.configs = configs
+		self.SCREEN_WIDTH, self.SCREEN_HEIGHT = self.configs.toml_dict["resolution"]
 
 		self.running:bool = True
 		self.font = pygame.font.SysFont("default", 64, bold=False, italic=False)

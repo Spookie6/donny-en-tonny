@@ -31,13 +31,10 @@ class QuitPopup:
   
 		self.keys = []
 		self.buttonDown = False
-  
-		self.menuButtons = []
  
 	def run(self) -> None:
 
 		while self.running:
-			print(self.buttonDown)
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.running = False
@@ -50,6 +47,11 @@ class QuitPopup:
 			surf_rect[0] = self.screen.get_width() / 2 - surf_rect[2] / 2
 			surf_rect[1] = self.screen.get_height() / 2 - surf_rect[3] / 2
    
+			# Make the buttons
+			button_yes = Button(Pos(surf_rect[2] / 2 - 120, surf_rect[3] / 2 + 30), 70, 50, "Yes")
+			button_no = Button(Pos(surf_rect[2] / 2 + 40, surf_rect[3] / 2 + 30), 70, 50, "No")
+
+			# Close popup if clicked outside of it
 			mx, my = pygame.mouse.get_pos()
 			if self.buttonDown:
 				if surf_rect.collidepoint((mx, my)):
@@ -57,23 +59,36 @@ class QuitPopup:
 				else:
 					pygame.time.delay(200)
 					self.running = False
-     
-			self.buttonDown = False
-			
-			for button in self.menuButtons:
-				button.draw(self.screen, self.font)
-				button.checkActive(self.buttonDown, self.configs)
-
-
+	
+			# Popup button actions
+			mx = mx - surf_rect[0]
+			my = my - surf_rect[1]
+			if button_yes.rect.collidepoint((mx, my)):
+				button_yes.color = "Green"
+				if self.buttonDown:
+					pygame.quit()
+					sys.exit()
+			else: button_yes.color = "White"
+			if button_no.rect.collidepoint((mx, my)):
+				button_no.color = "Green"
+				if self.buttonDown:
+					self.running = False
+			else: button_no.color = "White"
+   
+			# Rendering
 			self.surface.fill("black")
    
-			button_yes = Button(Pos(surf_rect[2] / 2 - 120, surf_rect[3] / 2 + 30), 80, 50, "Yes", QuitPopup)
-			button_no = Button(Pos(surf_rect[2] / 2 + 40, surf_rect[3] / 2 + 30), 80, 50, "No", QuitPopup)
+			titleImg = self.font.render("Are you sure you want to quit?", False, "Blue")
+			x, y, w, h = titleImg.get_rect(center = (surf_rect[0], surf_rect[1]))
+   
 			button_yes.draw(self.surface, self.font)
 			button_no.draw(self.surface, self.font)
    
-			self.screen.blit(self.surface, (self.screen.get_width() / 2 - surf_rect[2] / 2, self.screen.get_height() / 2 - surf_rect[3] / 2))
-
+			self.screen.blit(self.surface, (surf_rect[0], surf_rect[1]))
+			self.screen.blit(titleImg, (surf_rect[0] + (surf_rect[2] / 2 - w /2), surf_rect[1] + (surf_rect[3] / 2 - h / 2) - 30))
+     
+			self.buttonDown = False
+   
 			pygame.display.update()
 			self.clock.tick(self.FPS)
    

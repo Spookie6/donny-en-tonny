@@ -45,7 +45,3 @@ class Button:
      
 		if not (self.rect.collidepoint((mx, my))):
 			self.color = "White"
-
-class Header():
-	def __init__(self) -> None:
-		pass

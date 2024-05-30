@@ -20,13 +20,6 @@ from data.configs import Configs
 from data.constants import Constants
 constants = Constants()
 
-def quitPopup(screen, font):
-	surf = pygame.Surface((400, 200))
-	surf.fill("black")
-	surf_rect = surf.get_rect()
-	print(surf_rect)
-	screen.blit(surf, (screen.get_width() / 2 - surf_rect[2] / 2, screen.get_height() / 2 - surf_rect[3] / 2))
-
 class MainMenu:
 	# # CONSTANT GAME VARIABLES
 	FPS:int = constants.FPS
@@ -39,7 +32,7 @@ class MainMenu:
 		self.running:bool = True
 		self.font = pygame.font.SysFont("default", 32, bold=False, italic=False)
 		self.clock = pygame.time.Clock()
-		self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), )
+		self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT),  )
   
 		self.keys = []
 		self.buttonDown = False
@@ -80,6 +73,7 @@ class MainMenu:
 			if self.quit:
 				print("h")
 				self.quit = False
+				self.buttonDown = False
 				pygame.time.delay(200)
 				QuitPopup(self.configs, self.screen).run()
 
