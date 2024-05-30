@@ -1,5 +1,4 @@
 import pygame, sys
-import tkinter as tk
 
 path = sys.path[0].split("\\")
 path.pop()
@@ -7,47 +6,59 @@ path = "\\".join(path)
 
 sys.path.append(path)
 
-RESOLUTIONS = ([1280, 720], [1920, 1080], [2560, 1440])
-
+# Import components
 from components import Button
 from sprites import Pos
 
+# Import menu screens
 from host import HostMenu
-from settings import SettingsMenu 
+from quitpopup import QuitPopup
 from main import Game
 
+# Import data
 from data.configs import Configs
+from data.constants import Constants
+constants = Constants()
+
+def quitPopup(screen, font):
+	surf = pygame.Surface((400, 200))
+	surf.fill("black")
+	surf_rect = surf.get_rect()
+	print(surf_rect)
+	screen.blit(surf, (screen.get_width() / 2 - surf_rect[2] / 2, screen.get_height() / 2 - surf_rect[3] / 2))
 
 class MainMenu:
 	# # CONSTANT GAME VARIABLES
-	FPS:int = 60
+	FPS:int = constants.FPS
 	def __init__(self) -> None:
 		# Menu VARIABLES
 		pygame.init()	
 		self.configs = Configs()
 		self.SCREEN_WIDTH, self.SCREEN_HEIGHT = self.configs.toml_dict["resolution"]
-  
+
 		self.running:bool = True
 		self.font = pygame.font.SysFont("default", 32, bold=False, italic=False)
 		self.clock = pygame.time.Clock()
-		self.surface = pygame.Surface((2560, 1440))
-		self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.FULLSCREEN)
+		self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), )
+  
 		self.keys = []
 		self.buttonDown = False
+		self.pressed = False
+  
 		self.menuButtons = []
-		self.menuButtons.append(Button(Pos(self.surface.get_rect()[2] / 2 - 200, self.surface.get_rect()[3] / 2 - 130), 400, 100, "Host", HostMenu))
-		self.menuButtons.append(Button(Pos(self.surface.get_rect()[2] / 2 - 200, self.surface.get_rect()[3] / 2), 400, 100, "Join", Game))
-		self.menuButtons.append(Button(Pos(self.surface.get_rect()[2] / 2 - 200, self.surface.get_rect()[3] / 2 + 130), 400, 100, "Settings", SettingsMenu))
-	
+		self.menuButtons.append(Button(Pos(1280 / 2 - 100, 720 / 2 + 25), 200, 50, "Host", HostMenu))
+		self.menuButtons.append(Button(Pos(1280 / 2 - 100, 720 / 2 + 100), 200, 50, "Join", Game))
+		self.menuButtons.append(Button(Pos(1280 / 2 - 100, 720 / 2 + 175), 200, 50, "Quit", QuitPopup, self.screen))
+
+		self.quit = False
+ 
 	def run(self) -> None:
-		print(f"[MAIN MENU] - Resolution: ({self.screen.get_rect()})")
-		print(f"[MAIN MENU] - Button Info: {self.menuButtons[0].pos.x}, {self.menuButtons[0].pos.y}")
 
 		# Load bg image
-		bg_img = pygame.image.load("src/assets/menu-backgroun.jpg").convert_alpha()
-		print(bg_img.get_rect())
-  
+		bg_img = pygame.image.load("src/assets/background.png").convert_alpha()
+  		
 		while self.running:
+			print("Main")
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.running = False
@@ -57,43 +68,39 @@ class MainMenu:
 			self.configs = Configs()
 			self.keyboard()
    
-			self.surface.fill("black")
-			self.surface.blit(bg_img, (0,0))
-   
-			# Resize
-			sw, sh = self.configs.toml_dict["resolution"]
-			if  sw != self.SCREEN_WIDTH:
-				print("Wrong resolution!")
-				self.resizeDisplay((sw, sh))
-				for button in self.menuButtons:
-					button.rescale((), self.configs)
-				print(f"[MAIN MENU] - Rezised to ({sw}, {sh})")
-				print(f"[MAIN MENU] - Button Info: {self.menuButtons[0].pos.x}, {self.menuButtons[0].pos.y}")
-
+			self.screen.fill("black")
+			self.screen.blit(bg_img, (0,0))
+			
 			for button in self.menuButtons:
-				button.draw(self.surface, self.font)
+				button.draw(self.screen, self.font)
 				button.checkActive(self.buttonDown, self.configs)
-   
+
 			self.buttonDown = False
    
-			pygame.transform.scale(self.surface, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT), dest_surface=self.surface)
-			print(self.surface.get_rect())
-			self.screen.blit(self.surface, (0, 0))
+			if self.quit:
+				print("h")
+				self.quit = False
+				pygame.time.delay(200)
+				QuitPopup(self.configs, self.screen).run()
+
 			pygame.display.update()
 			self.clock.tick(self.FPS)
    
 	def keyboard(self) -> list:
 		keys = pygame.key.get_pressed()
+
+		if not keys[pygame.K_ESCAPE]:
+			self.pressed = False
+   
 		if keys[pygame.K_ESCAPE]:
-			pygame.quit()
-			sys.exit()
+			if not self.pressed:
+				if self.quit:
+					self.quit = False
+				else:
+					self.quit = True
+				self.pressed = True
+    
 		self.keys = keys
-  
-	def resizeDisplay(self, size) -> None:
-		print("Rezising!")
-		self.screen = pygame.display.set_mode(size)
-		self.SCREEN_WIDTH, self.SCREEN_HEIGHT = size
-		# self.font = pygame.font.SysFont("default", 32, bold=False, italic=False)
 
 
 if __name__ == "__main__":
