@@ -8,7 +8,7 @@ sys.path.append(path)
 
 # Import components
 from sprites import Pos
-from components import Button
+from components import Button, InputBox
 from server import Server
 
 # Import data
@@ -32,6 +32,9 @@ class HostMenu:
 		self.keys = []
 		self.buttonDown = False
   
+		self.inputFields = []
+		self.inputFields.append(InputBox())
+	
 		self.menuButtons = []
 		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 - 25), 200, 50, "Activate Server", None))
 

@@ -27,10 +27,11 @@ class MainMenu:
 		# Menu VARIABLES
 		pygame.init()	
 		self.configs = Configs()
+		constants.FONT = pygame.font.pygame.font.SysFont("default", 32, bold=False, italic=False)
 		self.SCREEN_WIDTH, self.SCREEN_HEIGHT = self.configs.toml_dict["resolution"]
 
 		self.running:bool = True
-		self.font = pygame.font.SysFont("default", 32, bold=False, italic=False)
+		self.font = constants.FONT
 		self.clock = pygame.time.Clock()
 		self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT),  )
   

@@ -19,7 +19,6 @@ class Button:
 		self.action = action
 		self.screen = screen
 		self.rect = pygame.Rect(pos.x, pos.y, self.width, self.height)
-		self.default_rect = pygame.Rect(pos.x, pos.y, self.width, self.height)
   
 	def draw(self, screen, font):
 		posTuple = self.pos.getTuple()
@@ -45,3 +44,37 @@ class Button:
      
 		if not (self.rect.collidepoint((mx, my))):
 			self.color = "White"
+   
+class InputBox:
+	def __init__(self, pos, width, height, placeholder, constants):
+		self.pos = pos
+		self.width = width
+		self.height = height
+		self.placeholder = placeholder
+		self.color = "White"
+		
+		self.active = False
+		self.value = ""
+  
+		self.rect = pygame.Rect(pos.x, pos.y, width, height)
+		self.txt_surf = constants.FONT.render(self.value, True, self.color)
+
+	def handle_event(self, event):
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			if self.rect.collidepoint(event.pos):
+				self.active = True
+			else: self.active = False
+
+		if event.type == pygame.KEYDOWN:
+			if self.active:
+				if event.key == pygame.K_RETURN:
+					print(self.value)
+					self.value = ""
+				elif event.key == pygame.K_BACKSPACE:
+					self.value = self.value[:-1]
+				else:
+					self.value += event.unicode
+
+
+	def draw(self, screen):
+		pass
