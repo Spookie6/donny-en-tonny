@@ -51,7 +51,6 @@ class MainMenu:
 		bg_img = pygame.image.load("src/assets/background.png").convert_alpha()
   		
 		while self.running:
-			print("Main")
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.running = False
@@ -71,7 +70,6 @@ class MainMenu:
 			self.buttonDown = False
    
 			if self.quit:
-				print("h")
 				self.quit = False
 				self.buttonDown = False
 				pygame.time.delay(200)

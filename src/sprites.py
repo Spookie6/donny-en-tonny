@@ -21,10 +21,10 @@ class Pos():
 				self.y = 0
 			if self.x < 0:
 				self.x = 0
-			if self.y + 32 >= 720:
-				self.y = 720 - 32
-			if self.x + 32 >= 1280:
-				self.x = 1280 - 32
+			if self.y + 16 >= 720:
+				self.y = 720 - 16
+			if self.x + 16 >= 1280:
+				self.x = 1280 - 16
 
 class Icon:
     pass
@@ -47,10 +47,10 @@ class Donny():
 	def __init__(self, starting_pos, speed):
 		self.pos = Pos(starting_pos[0], starting_pos[1])
 		self.speed = speed
-		self.rect = pygame.Rect(self.pos.x, self.pos.y, 32,32)
+		self.rect = pygame.Rect(self.pos.x, self.pos.y, 16,16)
   
 	def draw(self, screen):
-		self.rect = pygame.Rect(self.pos.x, self.pos.y, 32,32)
+		self.rect = pygame.Rect(self.pos.x, self.pos.y, 16,16)
 		pygame.draw.rect(screen, "blue", self.rect)
 
 	def move(self, keys):
