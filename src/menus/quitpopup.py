@@ -11,12 +11,11 @@ from components import Button
 from sprites import Pos
 
 # Import data
-from data.constants import Constants
-constants = Constants()
+from data.constants import constants
 
 class QuitPopup:
 	# # CONSTANT GAME VARIABLES
-	FPS:int = constants.FPS
+	FPS:int = constants["FPS"]
 	def __init__(self, configs, screen) -> None:
 		# Menu VARIABLES
 		pygame.init()
@@ -81,8 +80,8 @@ class QuitPopup:
 			titleImg = self.font.render("Are you sure you want to quit?", False, "Blue")
 			x, y, w, h = titleImg.get_rect(center = (surf_rect[0], surf_rect[1]))
    
-			button_yes.draw(self.surface, self.font)
-			button_no.draw(self.surface, self.font)
+			button_yes.draw(self.surface)
+			button_no.draw(self.surface)
    
 			self.screen.blit(self.surface, (surf_rect[0], surf_rect[1]))
 			self.screen.blit(titleImg, (surf_rect[0] + (surf_rect[2] / 2 - w /2), surf_rect[1] + (surf_rect[3] / 2 - h / 2) - 30))

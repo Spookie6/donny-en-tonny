@@ -1,12 +1,15 @@
 import pygame
 
+from data.constants import constants
+
 class Pos():
 	def __init__(self, x = None, y = None, width = None, height = None):
 		self.x = x
 		self.y = y
   
 	def centered(w=0, h=0):
-		return Pos(1280 / 2 - w / 2, 720 / 2 - h / 2)
+		res = constants["RESOLUTION"]
+		return Pos(res[0] / 2 - w / 2, res[1] / 2 - h / 2)
   
 	def getTuple(self):
 		return (self.x, self.y)

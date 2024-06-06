@@ -12,12 +12,11 @@ from components import Button, InputBox
 from server import Server
 
 # Import data
-from data.constants import Constants
-constants = Constants()
+from data.constants import constants
 
 class HostMenu:
 	# CONSTANT GAME VARIABLES
-	FPS = constants.FPS
+	FPS = constants["FPS"]
 	def __init__(self, configs) -> None:
 		# Menu VARIABLES
 		pygame.init()
@@ -33,10 +32,11 @@ class HostMenu:
 		self.buttonDown = False
   
 		self.inputFields = []
-		self.inputFields.append(InputBox())
+		centered_pos = Pos.centered(200, 50)
+		self.inputFields.append(InputBox(Pos(centered_pos.x, centered_pos.y + 25), 200, 50, "Name"))
 	
 		self.menuButtons = []
-		self.menuButtons.append(Button(Pos(self.SCREEN_WIDTH / 2 - 100, self.SCREEN_HEIGHT / 2 - 25), 200, 50, "Activate Server", None))
+		self.menuButtons.append(Button(Pos(centered_pos.x, centered_pos.y + 200), 200, 50, "Activate Server", None))
 
 	def run(self) -> None:
      
@@ -50,21 +50,27 @@ class HostMenu:
 					sys.exit()
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					self.buttonDown = True
+				for inputbox in self.inputFields:
+					inputbox.handle_event(event)
+    
 			self.keyboard()
 
 			self.screen.fill("black")
 			self.screen.blit(bg_img, (0,0))
    
 			for button in self.menuButtons:
-				button.draw(self.screen, self.font)
+				button.draw(self.screen)
 				mx, my = pygame.mouse.get_pos()
 				if button.rect.collidepoint((mx, my)):
-					button.color = "Green"
+					button.color = constants["BUTTON_ACTIVE"]
 					if self.buttonDown:
 						pygame.time.delay(200)
 						server = Server("Enrico", "Password")
 						server.start()
-				else: button.color = "White"
+				else: button.color = constants["BUTTON_INACTIVE"]
+
+			for inputbox in self.inputFields:
+				inputbox.draw(self.screen)
    
 			pygame.display.update()
 			self.clock.tick(self.FPS)

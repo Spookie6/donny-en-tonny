@@ -17,21 +17,20 @@ from main import Game
 
 # Import data
 from data.configs import Configs
-from data.constants import Constants
-constants = Constants()
+from data.constants import constants
 
 class MainMenu:
 	# # CONSTANT GAME VARIABLES
-	FPS:int = constants.FPS
+	FPS:int = constants["FPS"]
 	def __init__(self) -> None:
 		# Menu VARIABLES
 		pygame.init()	
 		self.configs = Configs()
-		constants.FONT = pygame.font.pygame.font.SysFont("default", 32, bold=False, italic=False)
+		constants["FONT"] = pygame.font.SysFont("default", 32, bold=False, italic=False)
 		self.SCREEN_WIDTH, self.SCREEN_HEIGHT = self.configs.toml_dict["resolution"]
 
 		self.running:bool = True
-		self.font = constants.FONT
+		self.font = constants["FONT"]
 		self.clock = pygame.time.Clock()
 		self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT),  )
   
@@ -65,7 +64,7 @@ class MainMenu:
 			self.screen.blit(bg_img, (0,0))
 			
 			for button in self.menuButtons:
-				button.draw(self.screen, self.font)
+				button.draw(self.screen)
 				button.checkActive(self.buttonDown, self.configs)
 
 			self.buttonDown = False
