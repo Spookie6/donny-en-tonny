@@ -48,8 +48,31 @@ class HostMenu:
 				if event.type == pygame.QUIT:
 					self.running = False
 					sys.exit()
+
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					self.buttonDown = True
+					
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE:
+						activebox = list(filter(lambda x : x.active, self.inputFields))
+						print(activebox)
+						if len(activebox):
+							index = self.inputFields.index(activebox[0])
+							self.inputFields[index].active = False
+						else:
+							self.running = False
+       
+					if event.key == pygame.K_TAB:
+						if len(self.inputFields) == 1:
+							continue
+						activebox = list(filter(lambda x : x.active, self.inputFields))
+						if len(activebox):
+							index = self.inputFields.index(activebox[0])
+							self.inputFields[index].active = False
+							nextIndex = 0 if len(self.inputFields) == index else index + 1
+							self.inputFields[index + 1].active = False
+							self.inputFields[nextIndex].active = True
+
 				for inputbox in self.inputFields:
 					inputbox.handle_event(event)
     
@@ -78,9 +101,6 @@ class HostMenu:
    
 	def keyboard(self) -> list:
 		keys = pygame.key.get_pressed()
-		if keys[pygame.K_ESCAPE]:
-			pygame.time.delay(200)
-			self.running = False
 		self.keys = keys
 
 

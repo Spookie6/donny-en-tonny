@@ -40,6 +40,9 @@ class QuitPopup:
 					sys.exit()
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					self.buttonDown = True
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE:
+						self.running = False
 			self.keyboard()
    
 			surf_rect = self.surface.get_rect()
@@ -93,9 +96,6 @@ class QuitPopup:
    
 	def keyboard(self) -> list:
 		keys = pygame.key.get_pressed()
-		if keys[pygame.K_ESCAPE]:
-			pygame.time.delay(200)
-			self.running = False
 		self.keys = keys
 
 

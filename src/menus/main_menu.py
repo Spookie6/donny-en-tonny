@@ -36,7 +36,6 @@ class MainMenu:
   
 		self.keys = []
 		self.buttonDown = False
-		self.pressed = False
   
 		self.menuButtons = []
 		self.menuButtons.append(Button(Pos(1280 / 2 - 100, 720 / 2 + 25), 200, 50, "Host", HostMenu))
@@ -57,6 +56,10 @@ class MainMenu:
 					sys.exit()
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					self.buttonDown = True
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE:
+							QuitPopup(self.configs, self.screen).run()
+       
 			self.configs = Configs()
 			self.keyboard()
    
@@ -68,30 +71,12 @@ class MainMenu:
 				button.checkActive(self.buttonDown, self.configs)
 
 			self.buttonDown = False
-   
-			if self.quit:
-				self.quit = False
-				self.buttonDown = False
-				pygame.time.delay(200)
-				QuitPopup(self.configs, self.screen).run()
 
 			pygame.display.update()
 			self.clock.tick(self.FPS)
    
 	def keyboard(self) -> list:
-		keys = pygame.key.get_pressed()
-
-		if not keys[pygame.K_ESCAPE]:
-			self.pressed = False
-   
-		if keys[pygame.K_ESCAPE]:
-			if not self.pressed:
-				if self.quit:
-					self.quit = False
-				else:
-					self.quit = True
-				self.pressed = True
-    
+		keys = pygame.key.get_pressed()    
 		self.keys = keys
 
 
