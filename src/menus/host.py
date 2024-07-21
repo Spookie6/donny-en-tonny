@@ -1,4 +1,4 @@
-import pygame, sys, time
+import pygame, sys, threading
 
 path = sys.path[0].split("\\")
 path.pop()
@@ -9,7 +9,7 @@ sys.path.append(path)
 # Import components
 from sprites import Pos
 from components import Button, InputBox
-from server import Server
+from network.server import Server
 
 # Import data
 from data.constants import constants
@@ -31,9 +31,12 @@ class HostMenu:
 		self.keys = []
 		self.buttonDown = False
   
+		self.server_thread = None
+  
 		self.inputFields = []
 		centered_pos = Pos.centered(200, 50)
 		self.inputFields.append(InputBox(Pos(centered_pos.x, centered_pos.y + 25), 200, 50, "Name"))
+		self.inputFields.append(InputBox(Pos(centered_pos.x, centered_pos.y + 100), 200, 50, "Password"))
 	
 		self.menuButtons = []
 		self.menuButtons.append(Button(Pos(centered_pos.x, centered_pos.y + 200), 200, 50, "Activate Server", None))
@@ -55,7 +58,6 @@ class HostMenu:
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_ESCAPE:
 						activebox = list(filter(lambda x : x.active, self.inputFields))
-						print(activebox)
 						if len(activebox):
 							index = self.inputFields.index(activebox[0])
 							self.inputFields[index].active = False
@@ -69,8 +71,8 @@ class HostMenu:
 						if len(activebox):
 							index = self.inputFields.index(activebox[0])
 							self.inputFields[index].active = False
-							nextIndex = 0 if len(self.inputFields) == index else index + 1
-							self.inputFields[index + 1].active = False
+							nextIndex = 0 if len(self.inputFields) - 1 == index else index + 1
+							self.inputFields[index].active = False
 							self.inputFields[nextIndex].active = True
 
 				for inputbox in self.inputFields:
@@ -87,9 +89,9 @@ class HostMenu:
 				if button.rect.collidepoint((mx, my)):
 					button.color = constants["BUTTON_ACTIVE"]
 					if self.buttonDown:
-						pygame.time.delay(200)
 						server = Server("Enrico", "Password")
-						server.start()
+						self.server_thread = threading.Thread(target=server.start)
+						self.server_thread.start()
 				else: button.color = constants["BUTTON_INACTIVE"]
 
 			for inputbox in self.inputFields:

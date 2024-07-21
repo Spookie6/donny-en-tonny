@@ -1,7 +1,7 @@
 import socket
 
-HEADER = 64
-PORT = 5050
+HEADER = 4096
+PORT = 5060
 FORMAT = "utf-8"
 DISCONNECT_MESSAGE = "!DISCONNECT"
 SERVER = socket.gethostbyname(socket.gethostname())
@@ -19,6 +19,13 @@ def send(msg):
     client.send(message)
     print(client.recv(HEADER).decode(FORMAT))
     
-send("(Enrico, Password)")
-input()
-send(DISCONNECT_MESSAGE)
+send(f"BFDOBFUDOABFDOASBFO-{SERVER}")
+
+while True:
+    msg = input()
+    if msg == "dc":
+        send(DISCONNECT_MESSAGE)
+        break
+    else:
+        send(msg)
+    
