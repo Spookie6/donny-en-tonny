@@ -30,7 +30,11 @@ class QuitPopup:
   
 		self.keys = []
 		self.buttonDown = False
- 
+  
+		self.rect = self.surface.get_rect()
+		self.rect[0] = self.screen.get_width() / 2 - self.rect[2] / 2
+		self.rect[1] = 0 - self.rect[3]
+  
 	def run(self) -> None:
 
 		while self.running:
@@ -45,28 +49,24 @@ class QuitPopup:
 						self.running = False
 			self.keyboard()
    
-			surf_rect = self.surface.get_rect()
-			surf_rect[0] = self.screen.get_width() / 2 - surf_rect[2] / 2
-			surf_rect[1] = self.screen.get_height() / 2 - surf_rect[3] / 2
-   
 			# Make the buttons
-			button_yes = Button(Pos(surf_rect[2] / 2 - 120, surf_rect[3] / 2 + 30), 70, 50, "Yes")
-			button_no = Button(Pos(surf_rect[2] / 2 + 40, surf_rect[3] / 2 + 30), 70, 50, "No")
+			button_yes = Button(Pos(self.rect[2] / 2 - 120, self.rect[3] / 2 + 30), 70, 50, "Yes")
+			button_no = Button(Pos(self.rect[2] / 2 + 40, self.rect[3] / 2 + 30), 70, 50, "No")
 
 			# Close popup if clicked outside of it
 			mx, my = pygame.mouse.get_pos()
 			if self.buttonDown:
-				if surf_rect.collidepoint((mx, my)):
+				if self.rect.collidepoint((mx, my)):
 					pass
 				else:
 					pygame.time.delay(200)
 					self.running = False
 	
 			# Popup button actions
-			mx = mx - surf_rect[0]
-			my = my - surf_rect[1]
+			mx = mx - self.rect[0]
+			my = my - self.rect[1]
 			if button_yes.rect.collidepoint((mx, my)):
-				button_yes.color = "Green"
+				button_yes.color = "Green"	
 				if self.buttonDown:
 					pygame.quit()
 					sys.exit()
@@ -81,13 +81,14 @@ class QuitPopup:
 			self.surface.fill("black")
    
 			titleImg = self.font.render("Are you sure you want to quit?", False, "Blue")
-			x, y, w, h = titleImg.get_rect(center = (surf_rect[0], surf_rect[1]))
+			x, y, w, h = titleImg.get_rect(center = (self.rect[0], self.rect[1]))
    
 			button_yes.draw(self.surface)
 			button_no.draw(self.surface)
    
-			self.screen.blit(self.surface, (surf_rect[0], surf_rect[1]))
-			self.screen.blit(titleImg, (surf_rect[0] + (surf_rect[2] / 2 - w /2), surf_rect[1] + (surf_rect[3] / 2 - h / 2) - 30))
+
+			self.screen.blit(self.surface, (self.rect[0], self.rect[1]))
+			self.screen.blit(titleImg, (self.rect[0] + (self.rect[2] / 2 - w /2), self.rect[1] + (self.rect[3] / 2 - h / 2) - 30))
      
 			self.buttonDown = False
    
@@ -97,7 +98,6 @@ class QuitPopup:
 	def keyboard(self) -> list:
 		keys = pygame.key.get_pressed()
 		self.keys = keys
-
 
 if __name__ == "__main__":
 	menu = QuitPopup()

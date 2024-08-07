@@ -2,7 +2,7 @@ import pygame
 
 from data.constants import constants
 
-class Pos():
+class Pos:
 	def __init__(self, x = None, y = None, width = None, height = None):
 		self.x = x
 		self.y = y

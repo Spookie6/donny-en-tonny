@@ -9,8 +9,7 @@ sys.path.append(path)
 # Import components
 from sprites import Pos
 from components import Button, InputBox
-from server import Server
-from client import Client
+from network.server import Server
 
 # Import data
 from data.constants import constants
@@ -36,6 +35,8 @@ class HostMenu:
   
 		self.keys = []
 		self.buttonDown = False
+  
+		self.server_thread = None
   
 		self.inputFields = []
 		centered_pos = Pos.centered(200, 50)
@@ -80,7 +81,7 @@ class HostMenu:
 						if len(activebox):
 							index = self.inputFields.index(activebox[0])
 							self.inputFields[index].active = False
-							nextIndex = 0 if len(self.inputFields) == index + 1 else index + 1
+							nextIndex = 0 if len(self.inputFields) - 1 == index else index + 1
 							self.inputFields[index].active = False
 							self.inputFields[nextIndex].active = True
 
@@ -98,18 +99,9 @@ class HostMenu:
 				if button.rect.collidepoint((mx, my)):
 					button.color = constants["BUTTON_ACTIVE"]
 					if self.buttonDown:
-         
-						configs = Configs()
-						server = Server(configs.toml_dict["server_name"], configs.toml_dict["server_password"])
-						thread = threading.Thread(target=server.start)
-						thread.start()
-
-						self.server = server
-						self.server_thread = thread
-      
-						client = Client(configs.toml_dict["server_name"], configs.toml_dict["server_password"])
-						client.connect()
-      
+						server = Server("Enrico", "Password")
+						self.server_thread = threading.Thread(target=server.start)
+						self.server_thread.start()
 				else: button.color = constants["BUTTON_INACTIVE"]
 
 			for inputbox in self.inputFields:

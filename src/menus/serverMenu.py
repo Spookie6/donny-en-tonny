@@ -11,15 +11,13 @@ from components import Button
 from sprites import Pos
 
 # Import menu screens
-from host import HostMenu
-from quitpopup import QuitPopup
-from join import JoinMenu
+# from host import HostMenu
 
 # Import data
 from data.configs import Configs
 from data.constants import constants
 
-class MainMenu:
+class ServerMenu:
 	# # CONSTANT GAME VARIABLES
 	FPS:int = constants["FPS"]
 	def __init__(self) -> None:
@@ -39,9 +37,7 @@ class MainMenu:
 		self.buttonDown = False
   
 		self.menuButtons = []
-		self.menuButtons.append(Button(Pos(1280 / 2 - 100, 720 / 2 + 25), 200, 50, "Host", HostMenu))
-		self.menuButtons.append(Button(Pos(1280 / 2 - 100, 720 / 2 + 100), 200, 50, "Join", JoinMenu))
-		self.menuButtons.append(Button(Pos(1280 / 2 - 100, 720 / 2 + 175), 200, 50, "Quit", QuitPopup, self.screen))
+		# self.menuButtons.append(Button(Pos(1280 / 2 - 100, 720 / 2 + 25), 200, 50, "Host", HostMenu))
 
 		self.quit = False
  
@@ -59,7 +55,7 @@ class MainMenu:
 					self.buttonDown = True
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_ESCAPE:
-							QuitPopup(self.configs, self.screen).run()
+							self.running = False
        
 			self.configs = Configs()
 			self.keyboard()
@@ -82,5 +78,5 @@ class MainMenu:
 
 
 if __name__ == "__main__":
-	menu = MainMenu()
+	menu = ServerMenu()
 	menu.run()
