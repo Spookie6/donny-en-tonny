@@ -23,7 +23,6 @@ def send(client, msg) -> None:
 		send_length += b' ' * (HEADER - len(send_length))
 		client.send(send_length)
 		client.send(message)
-  
 		package = (json.loads(client.recv(HEADER).decode(FORMAT).split("/")[1]))
 		index = package["ip"].split(".")[-1]
 		package["ping"] = time.time() * 1000 - times[int(index)]
@@ -32,10 +31,13 @@ def send(client, msg) -> None:
 def ping(ip) -> None:
 	remoteServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	remoteServerAddr = (ip, constants["SERVER_PORT"])
-	remoteServer.connect(remoteServerAddr)
-	send(remoteServer, constants["SERVER_PINGING_MSG"])
-	remoteServer.shutdown(socket.SHUT_RDWR)
-	remoteServer.close()
+	try:
+		remoteServer.connect(remoteServerAddr)
+		send(remoteServer, constants["SERVER_PINGING_MSG"])
+		remoteServer.shutdown(socket.SHUT_RDWR)
+		remoteServer.close()
+	except:
+		pass
 
 def fetchServers(serverList) -> list:
 	ipTemplate = ".".join(SERVER.split(".")[:-1])
@@ -44,7 +46,6 @@ def fetchServers(serverList) -> list:
 		try:
 			times.append(time.time() * 1000)
 			ip = f"{ipTemplate}.{i}"
-			# print(ip)
 			thread = threading.Thread(target=ping, args=(ip, ))
 			thread.start()
 		except:

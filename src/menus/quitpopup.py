@@ -33,7 +33,7 @@ class QuitPopup:
   
 		self.rect = self.surface.get_rect()
 		self.rect[0] = self.screen.get_width() / 2 - self.rect[2] / 2
-		self.rect[1] = 0 - self.rect[3]
+		self.rect[1] = self.screen.get_height() / 2 - self.rect[3] / 2
   
 	def run(self) -> None:
 
@@ -50,8 +50,8 @@ class QuitPopup:
 			self.keyboard()
    
 			# Make the buttons
-			button_yes = Button(Pos(self.rect[2] / 2 - 120, self.rect[3] / 2 + 30), 70, 50, "Yes")
-			button_no = Button(Pos(self.rect[2] / 2 + 40, self.rect[3] / 2 + 30), 70, 50, "No")
+			button_yes = Button(Pos(self.rect[2] / 2 - 120, self.rect[3] / 2 + 30), 70, 50, "Yes", customTextColor="black")
+			button_no = Button(Pos(self.rect[2] / 2 + 40, self.rect[3] / 2 + 30), 70, 50, "No", customTextColor="black")
 
 			# Close popup if clicked outside of it
 			mx, my = pygame.mouse.get_pos()
@@ -66,13 +66,13 @@ class QuitPopup:
 			mx = mx - self.rect[0]
 			my = my - self.rect[1]
 			if button_yes.rect.collidepoint((mx, my)):
-				button_yes.color = "Green"	
+				button_yes.color = constants["BUTTON_ACTIVE"]
 				if self.buttonDown:
 					pygame.quit()
 					sys.exit()
 			else: button_yes.color = "White"
 			if button_no.rect.collidepoint((mx, my)):
-				button_no.color = "Green"
+				button_no.color = constants["BUTTON_ACTIVE"]
 				if self.buttonDown:
 					self.running = False
 			else: button_no.color = "White"
@@ -80,16 +80,15 @@ class QuitPopup:
 			# Rendering
 			self.surface.fill("black")
    
-			titleImg = self.font.render("Are you sure you want to quit?", False, "Blue")
+			titleImg = self.font.render("Are you sure you want to quit?", False, "White")
 			x, y, w, h = titleImg.get_rect(center = (self.rect[0], self.rect[1]))
    
 			button_yes.draw(self.surface)
 			button_no.draw(self.surface)
-   
 
 			self.screen.blit(self.surface, (self.rect[0], self.rect[1]))
 			self.screen.blit(titleImg, (self.rect[0] + (self.rect[2] / 2 - w /2), self.rect[1] + (self.rect[3] / 2 - h / 2) - 30))
-     
+
 			self.buttonDown = False
    
 			pygame.display.update()

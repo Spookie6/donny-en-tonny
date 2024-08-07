@@ -11,15 +11,15 @@ constants = {
     "ENCODING_FORMAT": "utf-8",
     
     # Components
-    "BUTTON_ACTIVE": pygame.Color("aqua"),
-    "BUTTON_INACTIVE": pygame.Color("aliceblue"),
-    "BUTTON_TEXT_COLOR": pygame.Color("red"),
+    "BUTTON_ACTIVE": pygame.Color("cadetblue4"),
+    "BUTTON_INACTIVE": pygame.Color("black"),
+    "BUTTON_TEXT_COLOR": pygame.Color("white"),
     
-    "INPUTBOX_ACTIVE": pygame.Color("aqua"),
-    "INPUTBOX_INACTIVE": pygame.Color("aliceblue"),
-    "INPUTBOX_TEXT_COLOR": pygame.Color("red"),
+    "INPUTBOX_ACTIVE": pygame.Color("cadetblue4"),
+    "INPUTBOX_INACTIVE": pygame.Color("black"),
+    "INPUTBOX_TEXT_COLOR": pygame.Color("white"),
     
-    "LISTITEM_ACTIVE": pygame.Color("aqua"),
-    "LISTITEM_INACTIVE": pygame.Color("aliceblue"),
-    "LISTITEM_TEXT_COLOR": pygame.Color("red"),
+    "LISTITEM_ACTIVE": pygame.Color("cadetblue4"),
+    "LISTITEM_INACTIVE": pygame.Color("black"),
+    "LISTITEM_TEXT_COLOR": pygame.Color("white"),
 }

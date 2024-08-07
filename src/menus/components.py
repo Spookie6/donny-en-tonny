@@ -7,8 +7,11 @@ sys.path.append(path)
 
 from data.constants import constants
 from data.configs import Configs
+
+# from joinPopup import JoinPopup
+
 class Button:
-	def __init__(self, pos, width, height, title, action=None, screen=None) -> None:
+	def __init__(self, pos, width, height, title, action=None, screen=None, customTextColor=None) -> None:
 		self.pos = pos
 		self.width = width
 		self.height = height
@@ -17,12 +20,13 @@ class Button:
 		self.action = action
 		self.screen = screen
 		self.rect = pygame.Rect(pos.x, pos.y, self.width, self.height)
+		self.txtColor = customTextColor or constants["BUTTON_TEXT_COLOR"]
   
 	def draw(self, screen):
 		posTuple = self.pos.getTuple()
 		pygame.draw.rect(screen, self.color, self.rect)
 
-		titleImg = constants["FONT"].render(self.title, False, constants["BUTTON_TEXT_COLOR"])
+		titleImg = constants["FONT"].render(self.title, False, self.txtColor)
 		x, y, w, h = titleImg.get_rect(center=posTuple)
 		screen.blit(titleImg, (self.pos.x + (self.width / 2 - w / 2), self.pos.y + (self.height / 2 - h / 2)))
 
@@ -112,10 +116,10 @@ class InputBox:
 			self.animationStatus = not self.animationStatus
 
 		if self.animationStatus == 0:
-				self.txt_surf2 = constants["FONT"].render("", True, constants["INPUTBOX_TEXT_COLOR"])
+				self.txt_surf2 = constants["FONT"].render(" ", True, constants["INPUTBOX_TEXT_COLOR"])
 		if self.animationStatus == 1:
 				self.txt_surf2 = constants["FONT"].render("|", True, constants["INPUTBOX_TEXT_COLOR"])
-		self.txt_surf = constants["FONT"].render("*"*len(self.value) if self.password else self.value, True, constants["INPUTBOX_TEXT_COLOR"])
+		self.txt_surf = constants["FONT"].render("*"*len(self.value) if self.password and self.value != self.placeholder else self.value, True, constants["INPUTBOX_TEXT_COLOR"])
 	
 		posTuple = self.pos.getTuple()
 		pygame.draw.rect(screen, self.color, self.rect)
@@ -129,6 +133,7 @@ class InputBox:
   
 class ServerListItem:
 	def __init__(self, server, x, y, w, h):
+		self.server = server
 		self.ip = server["ip"]
 		self.name = server["name"]
 		self.playerCount = server["playerCount"]
@@ -141,12 +146,12 @@ class ServerListItem:
 		self.txt_surf_playerCount = constants["FONT"].render(f"{self.playerCount}/4", True, constants["INPUTBOX_TEXT_COLOR"])
 		self.txt_surf_ping = constants["FONT"].render(f"{self.ping} ms", True, constants["INPUTBOX_TEXT_COLOR"])
 
-	def handleEvent(self, event):
+	def handleEvent(self, server, screen, action):
 		mx, my = pygame.mouse.get_pos()
 		if self.rect.collidepoint(mx, my):
 			self.color = constants["LISTITEM_ACTIVE"]
 			if (pygame.mouse.get_pressed()[0]):
-				pass
+				action(server, screen).run()
 		else:
 			self.color = constants["LISTITEM_INACTIVE"]
  

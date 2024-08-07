@@ -7,11 +7,8 @@ path = "\\".join(path)
 sys.path.append(path)
 
 # Import components
-from components import ServerListItem
+from components import ServerListItem, Button
 from sprites import Pos
-
-# Import menu screens
-from main import Game
 
 # Import data
 from data.configs import Configs
@@ -19,6 +16,8 @@ from data.constants import constants
 
 # Import networking features
 from network.serverFetcher import fetchServers
+
+from joinPopup import JoinPopup
 
 class JoinMenu:
 	# # CONSTANT GAME VARIABLES
@@ -47,7 +46,6 @@ class JoinMenu:
 		self.thread = threading.Thread(target=fetchServers, args=(self.serverList,))
 		self.thread.start()
 
- 
 	def run(self) -> None:
 
 		# Load bg image
@@ -65,6 +63,8 @@ class JoinMenu:
 							if self.thread.is_alive():
 								pass
 							else:
+								self.serverList = []
+								self.listItems = []
 								self.running = False
        
 			self.configs = Configs()
@@ -77,7 +77,7 @@ class JoinMenu:
 				rect = pygame.Rect(Pos.centered().x - 150, Pos.centered().y - 50, 300, 100)
 				pygame.draw.rect(self.screen, "Black", rect)
     
-				loading_txt_surf = constants["FONT"].render("Loading...", False, "Blue")
+				loading_txt_surf = constants["FONT"].render("Loading...", False, "White")
 				loading_txt_rect = loading_txt_surf.get_rect()
     
 				self.screen.blit(loading_txt_surf, (Pos.centered().x - loading_txt_rect[2] /2, Pos.centered().y - loading_txt_rect[3]/2))
@@ -94,7 +94,7 @@ class JoinMenu:
    
 			if len(self.listItems):
 				for item in self.listItems:
-					item.handleEvent(None)
+					item.handleEvent(item.server, self.screen, JoinPopup)
 					item.draw(self.screen)
 			else:
 				rect = pygame.Rect(Pos.centered().x - 150, Pos.centered().y - 50, 300, 100)
