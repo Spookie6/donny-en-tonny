@@ -11,8 +11,8 @@ class Configs:
         with open("src/data/configs.toml") as file:
             self.toml_dict = toml.load(file)
 
-    def setRes(self, res) -> None:
-        self.toml_dict["resolution"] = res
+    def setData(self, name, value) -> None:
+        self.toml_dict[name] = value
 
     def save(self):
         with open("src/data/configs.toml", "w") as file:

@@ -48,14 +48,13 @@ class Server:
     def stop(self):
         print(f"[SERVER]: Shutting down...")
         self.server.shutdown(socket.SHUT_RDWR)
-        # self.server.close()
-    
-    
             
 if __name__ == "__main__":
-    server = Server("Enrico", "Password")
+    server = Server("enrico", "arend")
     thread = threading.Thread(target=server.start)
     thread.start()
-    time.sleep(3)
-    server.stop()
-    sys.exit()
+    # time.sleep(3)
+    # server.stop()
+    # sys.exit()
+    
+    

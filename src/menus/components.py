@@ -8,6 +8,8 @@ sys.path.append(path)
 
 from sprites import Pos
 from data.constants import constants
+from data.configs import Configs
+configs = Configs()
 
 class Button:
 	def __init__(self, pos, width, height, title, action=None, screen=None) -> None:
@@ -15,7 +17,6 @@ class Button:
 		self.width = width
 		self.height = height
 		self.color = constants["BUTTON_INACTIVE"]
-		self.borderRadius = 50
 		self.title = title
 		self.action = action
 		self.screen = screen
@@ -40,8 +41,6 @@ class Button:
 						self.action(configs, self.screen).run()
 					else:
 						self.action(configs).run()
-				else:
-					self.title = "Clicked"
      
 		if not (self.rect.collidepoint((mx, my))):
 			self.color = constants["BUTTON_INACTIVE"]
@@ -57,7 +56,9 @@ class InputBox:
 		self.active = False
 		self.frameCount = 0
 		self.animationStatus = 0
-		self.value = placeholder
+  
+		data = configs.toml_dict[f"server_{self.placeholder.lower()}"]
+		self.value = data if data else placeholder
   
 		self.rect = pygame.Rect(pos.x, pos.y, width, height)
 		self.txt_surf = constants["FONT"].render(self.value, True, constants["TEXT_COLOR"])
@@ -72,7 +73,7 @@ class InputBox:
      
 		if not self.active:
 				self.frameCount = 0
-				self.animationStatus = 0
+				self.animationStatus = False
 				self.color = constants["INPUTBOX_INACTIVE"]
 				if self.value == "":
 					self.value = self.placeholder
@@ -88,9 +89,19 @@ class InputBox:
 				elif event.key == pygame.K_BACKSPACE:
 					self.value = self.value[:-1]
 				else:
+					Ascii = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 					if self.rect[0] + self.rect[2] - 20 <= self.rect[0] + self.txt_surf.get_rect()[2] + 20:
 						return
+					if event.unicode not in Ascii:
+						return
+  
 					self.value += event.unicode
+				
+				configs.setData(f"server_{self.placeholder.lower()}", self.value)
+				configs.save()
+    
+				self.frameCount = 0
+				self.animationStatus = True
 
 	def draw(self, screen):
 		if self.active:
@@ -100,9 +111,9 @@ class InputBox:
 			self.frameCount = 0
 			self.animationStatus = not self.animationStatus
 
-		if self.animationStatus == 0:
+		if not self.animationStatus:
 				self.txt_surf2 = constants["FONT"].render("", True, constants["TEXT_COLOR"])
-		if self.animationStatus == 1:
+		if self.animationStatus:
 				self.txt_surf2 = constants["FONT"].render("|", True, constants["TEXT_COLOR"])
 		self.txt_surf = constants["FONT"].render(self.value, True, constants["TEXT_COLOR"])
     

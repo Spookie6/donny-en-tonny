@@ -1,4 +1,4 @@
-import pygame, sys, time
+import pygame, sys, threading
 
 path = sys.path[0].split("\\")
 path.pop()
@@ -10,9 +10,12 @@ sys.path.append(path)
 from sprites import Pos
 from components import Button, InputBox
 from server import Server
+from client import Client
 
 # Import data
 from data.constants import constants
+from data.configs import Configs
+configs = Configs()
 
 class HostMenu:
 	# CONSTANT GAME VARIABLES
@@ -28,18 +31,21 @@ class HostMenu:
 		self.clock = pygame.time.Clock()
 		self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), )
   
+		self.server = None
+		self.server_thread = None
+  
 		self.keys = []
 		self.buttonDown = False
   
 		self.inputFields = []
 		centered_pos = Pos.centered(200, 50)
 		self.inputFields.append(InputBox(Pos(centered_pos.x, centered_pos.y + 25), 200, 50, "Name"))
+		self.inputFields.append(InputBox(Pos(centered_pos.x, centered_pos.y + 100), 200, 50, "Password"))
 	
 		self.menuButtons = []
-		self.menuButtons.append(Button(Pos(centered_pos.x, centered_pos.y + 200), 200, 50, "Activate Server", None))
+		self.menuButtons.append(Button(Pos(centered_pos.x, centered_pos.y + 175), 200, 50, "Activate Server", None))
 
 	def run(self) -> None:
-     
 		# Load bg image
 		bg_img = pygame.image.load("src/assets/background.png").convert_alpha()
   
@@ -47,6 +53,9 @@ class HostMenu:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.running = False
+					if self.server:
+						self.server.stop()
+						# self.server_thread.
 					sys.exit()
 
 				if event.type == pygame.MOUSEBUTTONDOWN:
@@ -55,12 +64,14 @@ class HostMenu:
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_ESCAPE:
 						activebox = list(filter(lambda x : x.active, self.inputFields))
-						print(activebox)
 						if len(activebox):
 							index = self.inputFields.index(activebox[0])
 							self.inputFields[index].active = False
 						else:
 							self.running = False
+							if self.server:
+								self.server.stop()
+
        
 					if event.key == pygame.K_TAB:
 						if len(self.inputFields) == 1:
@@ -69,8 +80,8 @@ class HostMenu:
 						if len(activebox):
 							index = self.inputFields.index(activebox[0])
 							self.inputFields[index].active = False
-							nextIndex = 0 if len(self.inputFields) == index else index + 1
-							self.inputFields[index + 1].active = False
+							nextIndex = 0 if len(self.inputFields) == index + 1 else index + 1
+							self.inputFields[index].active = False
 							self.inputFields[nextIndex].active = True
 
 				for inputbox in self.inputFields:
@@ -87,9 +98,18 @@ class HostMenu:
 				if button.rect.collidepoint((mx, my)):
 					button.color = constants["BUTTON_ACTIVE"]
 					if self.buttonDown:
-						pygame.time.delay(200)
-						server = Server("Enrico", "Password")
-						server.start()
+         
+						configs = Configs()
+						server = Server(configs.toml_dict["server_name"], configs.toml_dict["server_password"])
+						thread = threading.Thread(target=server.start)
+						thread.start()
+
+						self.server = server
+						self.server_thread = thread
+      
+						client = Client(configs.toml_dict["server_name"], configs.toml_dict["server_password"])
+						client.connect()
+      
 				else: button.color = constants["BUTTON_INACTIVE"]
 
 			for inputbox in self.inputFields:
