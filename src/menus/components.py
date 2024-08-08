@@ -48,32 +48,35 @@ class Button:
 			self.color = constants["BUTTON_INACTIVE"]
    
 class InputBox:
-	def __init__(self, pos, width, height, placeholder):
+	def __init__(self, pos, width, height, placeholder, customColor=None, customTextColor=None):
 		self.configs = Configs()
 		self.password = placeholder.lower() == "password"
+  
+		self.defColor = customColor or constants["INPUTBOX_INACTIVE"]
+		self.txtColor = customTextColor or constants["INPUTBOX_TEXT_COLOR"]
+		print(self.txtColor)
   
 		self.pos = pos
 		self.width = width
 		self.height = height
 		self.placeholder = placeholder
-		self.color = constants["INPUTBOX_INACTIVE"]
-		
+		self.color = self.defColor
 		self.active = False
 		self.frameCount = 0
 		self.animationStatus = 0
 		self.value = self.configs.toml_dict[f"server_{self.placeholder.lower()}"] or placeholder
   
-		self.charSet = "abcdefghijklmnopqrstuvwxyz"
+		self.charSet = "abcdefghijklmnopqrstuvwxyz0123456789"
 		if self.password:
 			self.charSet += "!@#$%^&*<>?/~\\"
   
 		self.rect = pygame.Rect(pos.x, pos.y, width, height)
-		self.txt_surf = constants["FONT"].render("*"*len(self.value) if self.password else self.value, True, constants["INPUTBOX_TEXT_COLOR"])
-		self.txt_surf2 = constants["FONT"].render("", True, constants["INPUTBOX_TEXT_COLOR"])
+		self.txt_surf = constants["FONT"].render("*"*len(self.value) if self.password else self.value, True, self.txtColor)
+		self.txt_surf2 = constants["FONT"].render("", True, self.txtColor)
 
-	def handle_event(self, event):
+	def handle_event(self, event, mousePos=None):
 		if event.type == pygame.MOUSEBUTTONDOWN:
-			if self.rect.collidepoint(event.pos):
+			if self.rect.collidepoint(mousePos if mousePos else event.pos):
 				self.active = True
 			else:
 				self.active = False
@@ -81,14 +84,13 @@ class InputBox:
 		if not self.active:
 				self.frameCount = 0
 				self.animationStatus = False
-				self.color = constants["INPUTBOX_INACTIVE"]
+				self.color = self.defColor
 				if self.value == "":
 					self.value = self.placeholder
 		else:
 			self.color = constants["INPUTBOX_ACTIVE"]
 			if self.value == self.placeholder:
 				self.value = ""
-	
 
 		if event.type == pygame.KEYDOWN:
 			if self.active:
@@ -116,10 +118,10 @@ class InputBox:
 			self.animationStatus = not self.animationStatus
 
 		if self.animationStatus == 0:
-				self.txt_surf2 = constants["FONT"].render(" ", True, constants["INPUTBOX_TEXT_COLOR"])
+				self.txt_surf2 = constants["FONT"].render(" ", True, self.txtColor)
 		if self.animationStatus == 1:
-				self.txt_surf2 = constants["FONT"].render("|", True, constants["INPUTBOX_TEXT_COLOR"])
-		self.txt_surf = constants["FONT"].render("*"*len(self.value) if self.password and self.value != self.placeholder else self.value, True, constants["INPUTBOX_TEXT_COLOR"])
+				self.txt_surf2 = constants["FONT"].render("|", True, self.txtColor)
+		self.txt_surf = constants["FONT"].render("*"*len(self.value) if self.password and self.value != self.placeholder else self.value, True, self.txtColor)
 	
 		posTuple = self.pos.getTuple()
 		pygame.draw.rect(screen, self.color, self.rect)

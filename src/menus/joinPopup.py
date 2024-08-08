@@ -26,7 +26,7 @@ class JoinPopup:
 		self.running:bool = True
 		self.font = pygame.font.SysFont("default", 32, bold=False, italic=False)
 		self.clock = pygame.time.Clock()
-		self.surface = pygame.Surface((300, 400))
+		self.surface = pygame.Surface((300, 350))
 		self.screen = screen
 		self.server = server
   
@@ -38,8 +38,11 @@ class JoinPopup:
 		self.rect[1] = self.screen.get_height() / 2 - self.rect[3] / 2 #y
   
 	def run(self) -> None:
+		# Make the components
+		button = Button(Pos(self.rect[2] / 2 - 100, self.rect[1] + 75), 200, 50, "Connect", customTextColor="black")
+		inputfield = InputBox(Pos(self.rect[2] / 2 - 100, self.rect[1] - 25), 200, 50, "Password", customColor="white", customTextColor="black")
 
-		while self.running:
+		while self.running:   
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.running = False
@@ -48,19 +51,23 @@ class JoinPopup:
 					self.buttonDown = True
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_ESCAPE:
-						self.running = False
+						if inputfield.active:
+							inputfield.active = False
+						else:
+							self.running = False
+					if event.key == pygame.K_TAB:
+						inputfield.active = not inputfield.active
+
+				mx, my = pygame.mouse.get_pos()
+				mx = mx - self.rect[0]
+				my = my - self.rect[1]
+				inputfield.handle_event(event, (mx, my))
 			self.keyboard()
-   
-			# Make the components
-			button = Button(Pos(self.rect[2] / 2 - (self.rect[2] * .6) /2, self.rect[1] + 150), self.rect[2] * .6, 50, "Connect", customTextColor="black")
-			inputfield = InputBox(Pos(self.rect[2] / 2 - (self.rect[2] * .6) /2, self.rect[1]), 200, 50, "Password")
 
 			# Close popup if clicked outside of it
 			mx, my = pygame.mouse.get_pos()
 			if self.buttonDown:
-				if self.rect.collidepoint((mx, my)):
-					pass
-				else:
+				if not self.rect.collidepoint((mx, my)):
 					pygame.time.delay(200)
 					self.running = False
 
@@ -77,11 +84,11 @@ class JoinPopup:
 			# Rendering
 			self.surface.fill("black")
    
-			titleImg = self.font.render(f"Connecting to {self.server["name"]}", False, "White")
+			titleImg = self.font.render("Connecting to {name}".format(name=self.server["name"]), False, "White")
 			x, y, w, h = titleImg.get_rect(center = (self.rect[0], self.rect[1]))
    
 			button.draw(self.surface)
-			inputfield.draw(self.screen)
+			inputfield.draw(self.surface)
 
 			self.screen.blit(self.surface, (self.rect[0], self.rect[1]))
 			self.screen.blit(titleImg, (self.rect[0] + (self.rect[2] / 2 - w /2), self.rect[1] + self.rect[3] *.2 - h ))
