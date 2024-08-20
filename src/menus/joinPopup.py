@@ -41,6 +41,7 @@ class JoinPopup:
 		# Make the components
 		button = Button(Pos(self.rect[2] / 2 - 100, self.rect[1] + 75), 200, 50, "Connect", customTextColor="black")
 		inputfield = InputBox(Pos(self.rect[2] / 2 - 100, self.rect[1] - 25), 200, 50, "Password", customColor="white", customTextColor="black")
+		alertTxt = ""
 
 		while self.running:   
 			for event in pygame.event.get():
@@ -77,8 +78,9 @@ class JoinPopup:
 			if button.rect.collidepoint((mx, my)):
 				button.color = constants["BUTTON_ACTIVE"]
 				if self.buttonDown:
-					pygame.quit()
-					sys.exit()
+					print(inputfield.value)
+					if not inputfield.value:
+						alertTxt = "Password Required!"
 			else: button.color = "White"
 
 			# Rendering
@@ -86,12 +88,15 @@ class JoinPopup:
    
 			titleImg = self.font.render("Connecting to {name}".format(name=self.server["name"]), False, "White")
 			x, y, w, h = titleImg.get_rect(center = (self.rect[0], self.rect[1]))
+			alertImg = self.font.render(alertTxt, False, "White")
+			x1, y1, w1, h1 = alertImg.get_rect(center = (self.rect[0], self.rect[1]))
    
 			button.draw(self.surface)
 			inputfield.draw(self.surface)
 
 			self.screen.blit(self.surface, (self.rect[0], self.rect[1]))
 			self.screen.blit(titleImg, (self.rect[0] + (self.rect[2] / 2 - w /2), self.rect[1] + self.rect[3] *.2 - h ))
+			self.screen.blit(alertImg, (self.rect[0] + (self.rect[2] / 2 - w1 /2), self.rect[1] + self.rect[3] *.4 - h1 ))
 
 			self.buttonDown = False
    

@@ -64,7 +64,7 @@ class InputBox:
 		self.active = False
 		self.frameCount = 0
 		self.animationStatus = 0
-		self.value = self.configs.toml_dict[f"server_{self.placeholder.lower()}"] or placeholder
+		self.value = self.configs.toml_dict[f"server_{self.placeholder.lower()}"]
   
 		self.charSet = "abcdefghijklmnopqrstuvwxyz0123456789"
 		if self.password:
@@ -85,12 +85,8 @@ class InputBox:
 				self.frameCount = 0
 				self.animationStatus = False
 				self.color = self.defColor
-				if self.value == "":
-					self.value = self.placeholder
 		else:
 			self.color = constants["INPUTBOX_ACTIVE"]
-			if self.value == self.placeholder:
-				self.value = ""
 
 		if event.type == pygame.KEYDOWN:
 			if self.active:
@@ -121,13 +117,20 @@ class InputBox:
 				self.txt_surf2 = constants["FONT"].render(" ", True, self.txtColor)
 		if self.animationStatus == 1:
 				self.txt_surf2 = constants["FONT"].render("|", True, self.txtColor)
-		self.txt_surf = constants["FONT"].render("*"*len(self.value) if self.password and self.value != self.placeholder else self.value, True, self.txtColor)
+
+		# txtValue = self.placeholder if not self.value else "*"*len(self.value) if self.password and self.value != self.placeholder else self.value
+		txtValue = ""
+		if not self.value and not self.active: txtValue = self.placeholder
+		elif self.value and self.password: txtValue = "*"*len(self.value)
+		elif self.value and not self.password: txtValue = self.value
+		elif self.active and not self.value: txtValue = ""
+		self.txt_surf = constants["FONT"].render(txtValue, True, self.txtColor)
 	
 		posTuple = self.pos.getTuple()
 		pygame.draw.rect(screen, self.color, self.rect)
 		x, y, w, h = self.txt_surf.get_rect(center=posTuple)
   		
-		if self.value == self.placeholder:
+		if txtValue == self.placeholder:
 			self.txt_surf.set_alpha(100)
 
 		screen.blit(self.txt_surf, (self.rect[0] + 20, self.pos.y + (self.height / 2 - h / 2)))

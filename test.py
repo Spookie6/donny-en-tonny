@@ -1,6 +1,4 @@
-pack = {
-	"ip": "hola"
-}
+import pyperclip as pc
 
-pack["ja"] = "nee"
-print(pack)
+pc.copy("Joris en de draak")
+print(pc.paste())
