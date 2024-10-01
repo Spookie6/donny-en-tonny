@@ -13,6 +13,7 @@ from sprites import Pos
 # Import data
 from data.configs import Configs
 from data.constants import constants
+from network.client import Client
 
 class JoinPopup:
 	# # CONSTANT GAME VARIABLES
@@ -29,6 +30,10 @@ class JoinPopup:
 		self.surface = pygame.Surface((300, 350))
 		self.screen = screen
 		self.server = server
+  
+		self.client = None
+		self.awaitingRes = False
+		self.res = ""
   
 		self.keys = []
 		self.buttonDown = False
@@ -78,10 +83,20 @@ class JoinPopup:
 			if button.rect.collidepoint((mx, my)):
 				button.color = constants["BUTTON_ACTIVE"]
 				if self.buttonDown:
-					print(inputfield.value)
 					if not inputfield.value:
 						alertTxt = "Password Required!"
+					else:
+						self.client = Client(self.server["ip"])
+						self.client.connect(inputfield.value)
+						self.awaitingRes = True
 			else: button.color = "White"
+
+			if self.awaitingRes:
+				print(self.client.res)
+				if self.client.res != "":
+					self.res = self.client.res
+					self.client.res = ""
+					print(self.res)
 
 			# Rendering
 			self.surface.fill("black")

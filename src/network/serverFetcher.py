@@ -8,10 +8,9 @@ sys.path.append(path)
 from data.constants import constants
 
 HEADER = constants["SERVER_HEADER"]
-PORT = 5060
 SERVER = socket.gethostbyname(socket.gethostname())
-ADDR = (SERVER, PORT)
 FORMAT = constants["ENCODING_FORMAT"]
+PORT = constants["SERVER_PORT"]
 
 responses = []
 times = []
@@ -30,7 +29,7 @@ def send(client, msg) -> None:
 
 def ping(ip) -> None:
 	remoteServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	remoteServerAddr = (ip, constants["SERVER_PORT"])
+	remoteServerAddr = (ip, PORT)
 	try:
 		remoteServer.connect(remoteServerAddr)
 		send(remoteServer, constants["SERVER_PINGING_MSG"])

@@ -1,4 +1,11 @@
-import pyperclip as pc
+import threading
 
-pc.copy("Joris en de draak")
-print(pc.paste())
+def ja():
+    while True:
+        print("ja")
+
+thread = threading.Thread(target=ja,)
+thread.start()
+
+while True:
+    print(2)

@@ -65,22 +65,24 @@ class Server:
                     self.playerCount -= 1
                     connected = False
                     break
-                    
-                elif msg != f"({self.name}, {self.password})":
-                    conn.send("Access denied - Incorrect password".encode(FORMAT))
-                    connected = False
-                    print("Incorrect password")
-                    print(f"[{addr}] Disconnected.")
-                    self.playerCount -= 1
-                    
+                
                 if msg == DISCONNECT_MESSAGE:
                     connected = False
                     print(f"[{addr}] Disconnected.")
                     self.playerCount -= 1
                     break
+                
+                if msg != self.password:
+                    conn.send("401".encode(FORMAT))
+                    connected = False
+                    print("Incorrect password")
+                    print(f"[{addr}] Disconnected.")
+                    self.playerCount -= 1
+                    
+                if msg == self.password:
+                    conn.send("202".encode(FORMAT))
 
                 print(f"[{addr}] {msg}")
-                conn.send("Msg received.".encode(FORMAT))
 
     def start(self):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
